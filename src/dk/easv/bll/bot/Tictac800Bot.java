@@ -15,11 +15,18 @@ public class Tictac800Bot implements IBot {
     @Override
     public IMove doMove(IGameState state) {
         String player = state.getMoveNumber() % 2 == 0 ? "0" : "1";
+        String opponent = player.equals("0") ? "1" : "0";
 
         // Prøv at finde et træk, der vinder mikroboardet
         IMove winningMove = findWinningMove(state, player);
         if (winningMove != null) {
             return winningMove;
+        }
+
+        // Forsøger at blokere modstanderen fra et winning move
+        IMove blockMove = findWinningMove(state, opponent);
+        if (blockMove != null) {
+            return blockMove;
         }
 
         // Ellers spil tilfældigt
@@ -47,7 +54,7 @@ public class Tictac800Bot implements IBot {
         return null; // Ingen vindende træk
     }
 
-    // Find mikroboardet uden at bruge /3*3
+    // Find miniboard uden at bruge /3*3
     private String[][] getMicroboard(String[][] board, int x, int y) {
         String[][] micro = new String[3][3];
 
@@ -64,7 +71,7 @@ public class Tictac800Bot implements IBot {
         else if (y <= 5) startY = 3;
         else startY = 6;
 
-        // Kopier mikroboardet
+        // Kopier miniboard
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 micro[i][j] = board[startX + i][startY + j];
@@ -74,7 +81,7 @@ public class Tictac800Bot implements IBot {
         return micro;
     }
 
-    // Tjek for sejr i 3x3 mikroboard
+    // Tjek for winning move i 3x3 miniboard
     private boolean checkWin3x3(String[][] micro, String player) {
         // Tjek rækker og kolonner
         for (int i = 0; i < 3; i++) {

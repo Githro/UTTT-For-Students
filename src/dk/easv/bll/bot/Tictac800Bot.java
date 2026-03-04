@@ -19,8 +19,14 @@ public class Tictac800Bot implements IBot {
         String opponent = player.equals("0") ? "1" : "0";
 
 
-        List<IMove> availableMoves = state.getField().getAvailableMoves();
         if (state.getMoveNumber() == 0){
+            value = 0;
+        }
+
+
+        boolean isBotPlayer1 = (state.getMoveNumber() % 2 == 0);
+        List<IMove> availableMoves = state.getField().getAvailableMoves();
+        if (state.getMoveNumber() == 0 && isBotPlayer1){
             IMove middleMove = new Move(4, 4);
             middleMove = middleStartMove(state,middleMove);
             if (middleMove != null){

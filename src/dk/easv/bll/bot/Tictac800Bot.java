@@ -11,11 +11,26 @@ public class Tictac800Bot implements IBot {
 
     private static final String BOTNAME = "T-800";
     private Random rand = new Random();
+    int value = 0;
 
     @Override
     public IMove doMove(IGameState state) {
         String player = state.getMoveNumber() % 2 == 0 ? "0" : "1";
         String opponent = player.equals("0") ? "1" : "0";
+
+
+        List<IMove> availableMoves = state.getField().getAvailableMoves();
+        if (state.getMoveNumber() == 0){
+            IMove middleMove = new Move(4, 4);
+            middleMove = middleStartMove(state,middleMove);
+            if (middleMove != null){
+                return middleMove;
+            }
+
+        }
+
+
+
 
         // Prøv at finde et træk, der vinder mikroboardet
         IMove winningMove = findWinningMove(state, player);
@@ -99,6 +114,18 @@ public class Tictac800Bot implements IBot {
 
         return false;
     }
+
+
+    public IMove middleStartMove(IGameState state, IMove middleMove ) {
+        if (value == 0) {
+            value = 1;
+            return middleMove;
+        }
+        return null;
+
+    }
+
+
 
     @Override
     public String getBotName() {

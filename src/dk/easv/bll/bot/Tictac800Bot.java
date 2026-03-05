@@ -32,67 +32,68 @@ public class Tictac800Bot implements IBot {
             if (middleMove != null){
                 return middleMove;
             }
-
         }
-
-
-
-
-        // Prøv at finde et træk, der vinder mikroboardet
+        //Vi starter med at se om der er et winning move for botten
         IMove winningMove = findWinningMove(state, player);
         if (winningMove != null) {
             return winningMove;
         }
-
-        // Forsøger at blokere modstanderen fra et winning move
+        //Hvis der ikke er et winning move for botten, så kigger den efter et winning move for modstanderen og blokerer
         IMove blockMove = findWinningMove(state, opponent);
         if (blockMove != null) {
             return blockMove;
         }
-
-        // Ellers spil tilfældigt
+        //Hvis der ikke er winning moves, så laver den et random move
         List<IMove> moves = state.getField().getAvailableMoves();
         return moves.get(rand.nextInt(moves.size()));
     }
 
-    // Find et træk, der kan give sejr i mikroboardet
+
     private IMove findWinningMove(IGameState state, String player) {
         List<IMove> moves = state.getField().getAvailableMoves();
         String[][] board = state.getField().getBoard();
 
         for (IMove move : moves) {
-            // Kopier mikroboardet
+            //Laver en kopi af 3x3 boardet
             String[][] micro = getMicroboard(board, move.getX(), move.getY());
 
-            // Simuler at player spiller her
+            //Laver en simulering af at playeren spiller her
             micro[move.getX() % 3][move.getY() % 3] = player;
 
             if (checkWin3x3(micro, player)) {
-                return move; // Vi fandt et vindende træk
+                //Hvis der findes et winning move
+                return move;
             }
         }
 
-        return null; // Ingen vindende træk
+        return null;
     }
 
-    // Find miniboard uden at bruge /3*3
+        //Vi kigger efter koordinaten på hele brættet
     private String[][] getMicroboard(String[][] board, int x, int y) {
+        //Så laves der et nyt, tomt 3x3 array
         String[][] micro = new String[3][3];
+
 
         int startX = 0;
         int startY = 0;
 
-        // Start X
+        /*
+        Så finder vi ud af, hvilken række og hvilken kolonne vi kigger efter, når vi har vores koordiater
+        for det move der er blevet valgt, så det kan placeres korrekt i det simulerede board
+        */
+
+        //Start X position
         if (x <= 2) startX = 0;
         else if (x <= 5) startX = 3;
         else startX = 6;
 
-        // Start Y
+        // Start Y position
         if (y <= 2) startY = 0;
         else if (y <= 5) startY = 3;
         else startY = 6;
 
-        // Kopier miniboard
+        //Kopier miniboard
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 micro[i][j] = board[startX + i][startY + j];
@@ -102,9 +103,9 @@ public class Tictac800Bot implements IBot {
         return micro;
     }
 
-    // Tjek for winning move i 3x3 miniboard
+    //Vi kigger efter et winning move i 3x3 miniboardet
     private boolean checkWin3x3(String[][] micro, String player) {
-        // Tjek rækker og kolonner
+        //Rækker og kolonner
         for (int i = 0; i < 3; i++) {
             if ((micro[i][0].equals(player) && micro[i][1].equals(player) && micro[i][2].equals(player)) ||
                     (micro[0][i].equals(player) && micro[1][i].equals(player) && micro[2][i].equals(player))) {
@@ -112,7 +113,7 @@ public class Tictac800Bot implements IBot {
             }
         }
 
-        // Tjek diagonaler
+        //Diagonaler
         if ((micro[0][0].equals(player) && micro[1][1].equals(player) && micro[2][2].equals(player)) ||
                 (micro[0][2].equals(player) && micro[1][1].equals(player) && micro[2][0].equals(player))) {
             return true;
@@ -128,10 +129,7 @@ public class Tictac800Bot implements IBot {
             return middleMove;
         }
         return null;
-
     }
-
-
 
     @Override
     public String getBotName() {
